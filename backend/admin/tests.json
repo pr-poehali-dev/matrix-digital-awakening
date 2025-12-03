@@ -1,0 +1,28 @@
+{
+  "tests": [
+    {
+      "name": "Get registrations with valid admin secret",
+      "method": "GET",
+      "path": "/",
+      "headers": {
+        "X-Admin-Secret": "matrix_admin_2025"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "total": "number",
+        "registrations": "array"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Get registrations without admin secret",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 403,
+      "expectedBody": {
+        "error": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

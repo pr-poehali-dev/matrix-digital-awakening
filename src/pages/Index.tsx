@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import MatrixRain from '@/components/MatrixRain';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,7 +10,26 @@ const Index = () => {
   const [selectedPill, setSelectedPill] = useState<'red' | 'blue' | null>(null);
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [stats, setStats] = useState({ total: 0, red_pill: 0, blue_pill: 0 });
   const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch('https://functions.poehali.dev/540f3fa3-886c-4a95-9afd-512f911e6f87');
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch stats:', error);
+      }
+    };
+    
+    fetchStats();
+    const interval = setInterval(fetchStats, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,6 +81,12 @@ const Index = () => {
       });
       setEmail('');
       setSelectedPill(null);
+      
+      const response2 = await fetch('https://functions.poehali.dev/540f3fa3-886c-4a95-9afd-512f911e6f87');
+      if (response2.ok) {
+        const newStats = await response2.json();
+        setStats(newStats);
+      }
     } catch (error) {
       toast({
         title: 'Ошибка',
@@ -82,11 +107,27 @@ const Index = () => {
           <h1 className="font-orbitron text-5xl md:text-7xl lg:text-8xl font-black text-matrix animate-matrix-glow mb-6">
             Ты всё ещё в матрице?
           </h1>
-          <p className="text-xl md:text-2xl text-primary/80 max-w-3xl mb-12">
+          <p className="text-xl md:text-2xl text-primary/80 max-w-3xl mb-8">
             15 – 16 марта — День цифрового пробуждения. 
             <br />
             Пора проверить, кто управляет твоей реальностью.
           </p>
+
+          <div className="flex items-center justify-center gap-6 mb-12 text-primary/70 font-mono">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-matrix">{stats.total}</div>
+              <div className="text-sm">Пробудившихся</div>
+            </div>
+            <div className="w-px h-12 bg-primary/30" />
+            <div className="text-center">
+              <div className="text-2xl font-bold" style={{ color: '#ff0033' }}>{stats.red_pill}</div>
+              <div className="text-xs">Красных</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold" style={{ color: '#0099ff' }}>{stats.blue_pill}</div>
+              <div className="text-xs">Синих</div>
+            </div>
+          </div>
 
           <div className="flex gap-8 mb-12">
             <button

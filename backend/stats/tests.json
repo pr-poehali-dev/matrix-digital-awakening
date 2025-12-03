@@ -1,0 +1,16 @@
+{
+  "tests": [
+    {
+      "name": "Get registration stats",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "total": "number",
+        "red_pill": "number",
+        "blue_pill": "number"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
