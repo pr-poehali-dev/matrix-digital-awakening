@@ -115,12 +115,20 @@ const Index = () => {
               ))}
             </div>
 
-            <div className="aspect-video bg-muted/10 rounded-lg border border-primary/20 flex items-center justify-center">
-              <div className="text-center">
-                <Icon name="Play" className="text-primary mx-auto mb-4" size={64} />
-                <p className="text-primary/60">Видео-тизер (30 сек)</p>
-              </div>
+            <div className="aspect-video bg-black rounded-lg border border-primary/20 overflow-hidden relative group">
+              <video
+                className="w-full h-full object-cover"
+                controls
+                poster="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&h=675&fit=crop"
+              >
+                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4" type="video/mp4" />
+                Ваш браузер не поддерживает видео
+              </video>
+              <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
             </div>
+            <p className="text-center text-sm text-primary/60 mt-4">
+              Видео-тизер: кадры из "Матрицы" + реальные истории цифрового детокса
+            </p>
           </div>
         </section>
 
