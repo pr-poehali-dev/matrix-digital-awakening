@@ -6,7 +6,7 @@ export default {
 		"./pages/**/*.{ts,tsx}",
 		"./components/**/*.{ts,tsx}",
 		"./app/**/*.{ts,tsx}",
-		"./src/**/*.{ts,tsx}",
+		"./src/**/*.{ts,tsx}"
 	],
 	prefix: "",
 	theme: {
@@ -68,6 +68,10 @@ export default {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
 			},
+			fontFamily: {
+				orbitron: ['Orbitron', 'sans-serif'],
+				mono: ['Roboto Mono', 'monospace'],
+			},
 			keyframes: {
 				'accordion-down': {
 					from: {
@@ -84,13 +88,45 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+				},
+				'matrix-glow': {
+					'0%, 100%': { opacity: '1', textShadow: '0 0 10px #00ff41, 0 0 20px #00ff41' },
+					'50%': { opacity: '0.8', textShadow: '0 0 20px #00ff41, 0 0 40px #00ff41' },
+				},
+				'pulse-pill': {
+					'0%, 100%': { transform: 'scale(1)', boxShadow: '0 0 20px currentColor' },
+					'50%': { transform: 'scale(1.05)', boxShadow: '0 0 40px currentColor' },
+				},
+				'glitch': {
+					'0%': { transform: 'translate(0)' },
+					'20%': { transform: 'translate(-2px, 2px)' },
+					'40%': { transform: 'translate(-2px, -2px)' },
+					'60%': { transform: 'translate(2px, 2px)' },
+					'80%': { transform: 'translate(2px, -2px)' },
+					'100%': { transform: 'translate(0)' },
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'matrix-glow': 'matrix-glow 2s ease-in-out infinite',
+				'pulse-pill': 'pulse-pill 2s ease-in-out infinite',
+				'glitch': 'glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite',
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [
+		require("tailwindcss-animate"),
+		function({ addUtilities }: any) {
+			addUtilities({
+				'.text-matrix': {
+					color: '#00ff41',
+					'text-shadow': '0 0 10px #00ff41',
+				},
+				'.bg-matrix-dark': {
+					'background-color': '#0d0208',
+				},
+			});
+		},
+	],
 } satisfies Config;
