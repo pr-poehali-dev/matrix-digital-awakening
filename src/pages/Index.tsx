@@ -9,9 +9,10 @@ import { useToast } from '@/hooks/use-toast';
 const Index = () => {
   const [selectedPill, setSelectedPill] = useState<'red' | 'blue' | null>(null);
   const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedPill) {
       toast({
@@ -29,12 +30,47 @@ const Index = () => {
       });
       return;
     }
-    toast({
-      title: selectedPill === 'red' ? '🔴 Красная пилюля принята' : '🔵 Синяя пилюля принята',
-      description: `Подтверждение отправлено на ${email}`,
-    });
-    setEmail('');
-    setSelectedPill(null);
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('https://functions.poehali.dev/cd845677-eb21-47a1-b504-462da8182f19', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          pillChoice: selectedPill,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast({
+          title: 'Ошибка регистрации',
+          description: data.error || 'Что-то пошло не так',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      toast({
+        title: selectedPill === 'red' ? '🔴 Красная пилюля принята' : '🔵 Синяя пилюля принята',
+        description: `Регистрация успешна! Проверьте ${email}`,
+      });
+      setEmail('');
+      setSelectedPill(null);
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось отправить регистрацию',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -119,15 +155,15 @@ const Index = () => {
               <video
                 className="w-full h-full object-cover"
                 controls
-                poster="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&h=675&fit=crop"
+                poster="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200&h=675&fit=crop&q=80"
               >
-                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4" type="video/mp4" />
+                <source src="https://cdn.pixabay.com/video/2023/06/19/167862-839166058_large.mp4" type="video/mp4" />
                 Ваш браузер не поддерживает видео
               </video>
               <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
             </div>
             <p className="text-center text-sm text-primary/60 mt-4">
-              Видео-тизер: кадры из "Матрицы" + реальные истории цифрового детокса
+              Видео-тизер: цифровая матрица, код реальности, пробуждение сознания
             </p>
           </div>
         </section>
@@ -222,9 +258,10 @@ const Index = () => {
 
                 <Button
                   type="submit"
-                  className="w-full font-orbitron bg-primary hover:bg-primary/90 text-background font-bold text-lg py-6"
+                  disabled={isLoading}
+                  className="w-full font-orbitron bg-primary hover:bg-primary/90 text-background font-bold text-lg py-6 disabled:opacity-50"
                 >
-                  Зарегистрироваться
+                  {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
                 </Button>
               </form>
             </Card>
